@@ -1,4 +1,4 @@
-## The Ralph Playbook
+# The Ralph Playbook
 
 December 2025 boiled [Ralph's](https://ghuntley.com/ralph/) powerful yet dumb little face to the top of most AI-related timelines.
 
@@ -6,9 +6,9 @@ I always try to pay attention to the crazy-smart insights [@GeoffreyHuntley](htt
 
 [@mattpocockuk](https://x.com/mattpocockuk/status/2008200878633931247) and [@ryancarson](https://x.com/ryancarson/status/2008548371712135632)'s overviews helped a lot - right until Geoff came in and [said 'nah'](https://x.com/GeoffreyHuntley/status/2008731415312236984).
 
-![nah.png](references/nah.png)
+<img src="references/nah.png" alt="nah" width="400" />
 
-_So what is the optimal way to Ralph?_
+## So what is the optimal way to Ralph?
 
 Many folks seem to be getting good results with various shapes - but I wanted to read the tea leaves as closely as possible from the person who not only captured this approach but also has had the most ass-time in the seat putting it through its paces.
 
