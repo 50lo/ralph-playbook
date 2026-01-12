@@ -46,18 +46,13 @@ while true; do
         break
     fi
 
-    # Run Ralph iteration with selected prompt
-    # -p: Headless mode (non-interactive, reads from stdin)
-    # --dangerously-skip-permissions: Auto-approve all tool calls (YOLO mode)
-    # --output-format=stream-json: Structured output for logging/monitoring
-    # --model opus: Primary agent uses Opus for complex reasoning (task selection, prioritization)
-    #               Can use 'sonnet' in build mode for speed if plan is clear and tasks well-defined
-    # --verbose: Detailed execution logging
-    cat "$PROMPT_FILE" | claude -p \
-        --dangerously-skip-permissions \
-        --output-format=stream-json \
-        --model opus \
-        --verbose
+    # Run Ralph iteration with selected prompt using Codex CLI (non-interactive)
+    # Codex reads initial instructions from stdin when PROMPT is "-".
+    # --dangerously-bypass-approvals-and-sandbox: Fully autonomous execution (ONLY safe in an externally sandboxed environment)
+    # --json: Stream JSONL events for logging/monitoring
+    cat "$PROMPT_FILE" | codex exec - \
+        --dangerously-bypass-approvals-and-sandbox \
+        --json
 
     # Push changes after each iteration
     git push origin "$CURRENT_BRANCH" || {
