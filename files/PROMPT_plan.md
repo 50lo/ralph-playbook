@@ -1,10 +1,37 @@
-0a. Study `specs/*` with up to 250 parallel Sonnet subagents to learn the application specifications.
-0b. Study @IMPLEMENTATION_PLAN.md (if present) to understand the plan so far.
-0c. Study `src/lib/*` with up to 250 parallel Sonnet subagents to understand shared utilities & components.
-0d. For reference, the application source code is in `src/*`.
+0. Repo discovery (do this first)
+- Start with `README*` (or the closest equivalent) to learn: purpose, where specs live, where source lives, and how to build/test.
+- List top-level files/directories.
+- Identify “documentation/specification” sources (e.g. `docs/`, `spec*`, `design/`, ADRs, RFCs, `/references`, issue templates).
+- Identify primary source roots and entrypoints (language/framework dependent; common roots include `src/`, `app/`, `packages/`, `cmd/`, `services/`, `lib/`, `internal/`).
+- If a monorepo, identify packages and their owners/build tools.
 
-1. Study @IMPLEMENTATION_PLAN.md (if present; it may be incorrect) and use up to 500 Sonnet subagents to study existing source code in `src/*` and compare it against `specs/*`. Use an Opus subagent to analyze findings, prioritize tasks, and create/update @IMPLEMENTATION_PLAN.md as a bullet point list sorted in priority of items yet to be implemented. Ultrathink. Consider searching for TODO, minimal implementations, placeholders, skipped/flaky tests, and inconsistent patterns. Study @IMPLEMENTATION_PLAN.md to determine starting point for research and keep it up to date with items considered complete/incomplete using subagents.
+1. Establish the intended behavior
+- Read the minimal set of docs/specs needed to understand what the software is supposed to do.
+- If no formal spec exists, infer requirements from README, CLI help, API docs, tests, and examples.
 
-IMPORTANT: Plan only. Do NOT implement anything. Do NOT assume functionality is missing; confirm with code search first. Treat `src/lib` as the project's standard library for shared utilities and components. Prefer consolidated, idiomatic implementations there over ad-hoc copies.
+2. Audit current implementation (evidence-based)
+- Use targeted code search to map features → files/symbols/tests.
+- Confirm reality in code before claiming something is missing.
+- Look specifically for TODOs, stubs/placeholders, “temporary” implementations, skipped/flaky tests, and inconsistent patterns.
 
-ULTIMATE GOAL: We want to achieve [project-specific goal]. Consider missing elements and plan accordingly. If an element is missing, search first to confirm it doesn't exist, then if needed author the specification at specs/FILENAME.md. If you create a new element then document the plan to implement it in @IMPLEMENTATION_PLAN.md using a subagent.
+3. Produce/Update `IMPLEMENTATION_PLAN.md`
+- Output a prioritized bullet list of remaining work.
+- Each item must include:
+  - The goal/outcome.
+  - Evidence: relevant file paths and (when applicable) key symbols/commands/tests.
+  - Acceptance criteria (how to verify).
+  - Notes on dependencies/risk.
+- Keep the plan current by marking items complete/incomplete only when verified.
+
+4. Optional parallelism (only if available in your environment)
+- If your tooling supports parallel analysis (multiple workers/sessions), you may use it to speed up repo scanning.
+- If not available, proceed sequentially; do not reference specific models or “subagents”.
+
+IMPORTANT
+- Plan only. Do NOT implement anything. Do NOT modify code or config unless explicitly asked.
+- Do not hardcode repo structure assumptions. Always discover layout first.
+- Prefer consolidated, idiomatic shared utilities in the repo’s existing shared locations (e.g. `lib/`, `shared/`, workspace packages) over ad-hoc copies.
+
+ULTIMATE GOAL
+- Achieve [project-specific goal].
+- If a required spec element is missing: search first to confirm it doesn’t exist; then propose authoring it (e.g. in `docs/` or `specs/`) and include that work in `IMPLEMENTATION_PLAN.md`.
