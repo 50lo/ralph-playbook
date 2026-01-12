@@ -215,7 +215,7 @@ And remember, _the plan is disposable:_
 Geoff's initial minimal form of `loop.sh` script:
 
 ```bash
-while :; do cat PROMPT.md | claude ; done
+while :; do cat PROMPT.md | codex exec - --dangerously-bypass-approvals-and-sandbox --json ; done
 ```
 
 _Note:_ The same approach can be used with other CLIs; e.g. `amp`, `codex`, `opencode`, etc.
@@ -224,7 +224,7 @@ _What controls task continuation?_
 
 The continuation mechanism is elegantly simple:
 
-1. _Bash loop runs_ → feeds `PROMPT.md` to claude
+1. _Bash loop runs_ → feeds `PROMPT.md` to Codex
 2. _PROMPT.md instructs_ → "Study IMPLEMENTATION_PLAN.md and choose the most important thing"
 3. _Agent completes one task_ → updates IMPLEMENTATION_PLAN.md on disk, commits, exits
 4. _Bash loop restarts immediately_ → fresh context window
@@ -302,18 +302,13 @@ while true; do
         break
     fi
 
-    # Run Ralph iteration with selected prompt
-    # -p: Headless mode (non-interactive, reads from stdin)
-    # --dangerously-skip-permissions: Auto-approve all tool calls (YOLO mode)
-    # --output-format=stream-json: Structured output for logging/monitoring
-    # --model opus: Primary agent uses Opus for complex reasoning (task selection, prioritization)
-    #               Can use 'sonnet' in build mode for speed if plan is clear and tasks well-defined
-    # --verbose: Detailed execution logging
-    cat "$PROMPT_FILE" | claude -p \
-        --dangerously-skip-permissions \
-        --output-format=stream-json \
-        --model opus \
-        --verbose
+    # Run Ralph iteration with selected prompt using Codex CLI (non-interactive)
+    # Codex reads initial instructions from stdin when PROMPT is "-".
+    # --dangerously-bypass-approvals-and-sandbox: Fully autonomous execution (ONLY safe in an externally sandboxed environment)
+    # --json: Stream JSONL events for logging/monitoring
+    cat "$PROMPT_FILE" | codex exec - \
+        --dangerously-bypass-approvals-and-sandbox \
+        --json
 
     # Push changes after each iteration
     git push origin "$CURRENT_BRANCH" || {
@@ -338,13 +333,12 @@ _Max-iterations:_
 - `./loop.sh` runs unlimited (manual stop with Ctrl+C)
 - `./loop.sh 20` runs max 20 iterations then stops
 
-_Claude CLI flags:_
+_Codex CLI flags:_
 
-- `-p` (headless mode): Enables non-interactive operation, reads prompt from stdin
-- `--dangerously-skip-permissions`: Bypasses all permission prompts for fully automated runs
-- `--output-format=stream-json`: Outputs structured JSON for logging/monitoring/visualization
-- `--model opus`: Primary agent uses Opus for task selection, prioritization, and coordination (can use `sonnet` for speed if tasks are clear)
-- `--verbose`: Provides detailed execution logging
+- `codex exec -`: Runs non-interactively and reads initial instructions from stdin
+- `--dangerously-bypass-approvals-and-sandbox`: Skips approvals + sandboxing (ONLY safe in an externally sandboxed environment)
+- `--json`: Streams JSONL events for logging/monitoring
+- `-m <MODEL>`: Selects a model (optional)
 
 ---
 
@@ -376,7 +370,7 @@ _Setup:_ Make the script executable before first use:
 chmod +x loop.sh
 ```
 
-_Core function:_ Continuously feeds prompt file to claude, manages iteration limits, and pushes changes after each task completion.
+_Core function:_ Continuously feeds the prompt file to Codex, manages iteration limits, and pushes changes after each task completion.
 
 ### PROMPTS
 
@@ -983,27 +977,20 @@ while true; do
         break
     fi
 
-    # Run Ralph iteration with selected prompt
-    # -p: Headless mode (non-interactive, reads from stdin)
-    # --dangerously-skip-permissions: Auto-approve all tool calls (YOLO mode)
-    # --output-format=stream-json: Structured output for logging/monitoring
-    # --model opus: Primary agent uses Opus for complex reasoning (task selection, prioritization)
-    #               Can use 'sonnet' for speed if plan is clear and tasks well-defined
-    # --verbose: Detailed execution logging
+    # Run Ralph iteration with selected prompt using Codex CLI (non-interactive)
+    # Codex reads initial instructions from stdin when PROMPT is "-".
+    # --dangerously-bypass-approvals-and-sandbox: Fully autonomous execution (ONLY safe in an externally sandboxed environment)
+    # --json: Stream JSONL events for logging/monitoring
 
     # For plan-work mode, substitute ${WORK_SCOPE} in prompt before piping
     if [ "$MODE" = "plan-work" ]; then
-        envsubst < "$PROMPT_FILE" | claude -p \
-            --dangerously-skip-permissions \
-            --output-format=stream-json \
-            --model opus \
-            --verbose
+        envsubst < "$PROMPT_FILE" | codex exec - \
+            --dangerously-bypass-approvals-and-sandbox \
+            --json
     else
-        cat "$PROMPT_FILE" | claude -p \
-            --dangerously-skip-permissions \
-            --output-format=stream-json \
-            --model opus \
-            --verbose
+        cat "$PROMPT_FILE" | codex exec - \
+            --dangerously-bypass-approvals-and-sandbox \
+            --json
     fi
 
     # Push to current branch
